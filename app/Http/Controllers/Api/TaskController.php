@@ -91,7 +91,18 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        if (!$task->client_id === auth()->user()->client_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This action is unauthorized.'
+            ], 403);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Task found successfully',
+            'data' => $task
+        ]);
     }
 
     /**
@@ -119,5 +130,21 @@ class TaskController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Task $task) {}
+    public function destroy(Task $task)
+    {
+        if (!$task->client_id === auth()->user()->client_id) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'This action is unauthorized.'
+            ], 403);
+        }
+
+        // Realiza o Soft Delete
+        $task->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Task deleted successfully',
+        ]);
+    }
 }
