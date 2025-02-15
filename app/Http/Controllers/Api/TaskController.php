@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\UserRoleEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
@@ -23,9 +24,11 @@ class TaskController extends Controller
             'createdBy:id,name,email',
             'team:id,name',
             'building',
-        ])
-            ->where('client_id', $user->client_id)
-            ->where('team_id', $user->team_id);
+        ])->where('client_id', $user->client_id);
+
+        if ($user->role !== UserRoleEnum::OWNER) {
+            $query->where('team_id', $user->team_id);
+        }
 
         // Filter by status
         if ($request->has('status')) {
