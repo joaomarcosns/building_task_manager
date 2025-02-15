@@ -69,7 +69,6 @@ class TaskController extends Controller
 
         // Add additional data to the task
         $data['client_id'] = auth()->user()->client_id;
-        $data['team_id'] = auth()->user()->team_id;
         $data['created_by'] = auth()->id();
         $data['due_date'] = now()->addDays(3)->toDateString();
 

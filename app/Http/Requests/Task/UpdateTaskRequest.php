@@ -5,6 +5,7 @@ namespace App\Http\Requests\Task;
 use App\Enums\BuildingStatusEnum;
 use App\Enums\TaskPriorityEnum;
 use App\Enums\TaskStatusEnum;
+use App\Enums\UserRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -17,7 +18,12 @@ class UpdateTaskRequest extends FormRequest
     {
         $task = $this->route('task');
 
-        return auth()->check() && $task && $task->client_id === auth()->user()->client_id;
+        return
+            auth()->check() &&
+            auth()->user()->role === UserRoleEnum::OWNER &&
+            $task &&
+            $task->client_id === auth()->user()->client_id &&
+            $task->created_by ===  auth()->user()->id;
     }
 
     /**

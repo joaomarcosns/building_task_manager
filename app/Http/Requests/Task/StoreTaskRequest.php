@@ -4,6 +4,7 @@ namespace App\Http\Requests\Task;
 
 use App\Enums\BuildingStatusEnum;
 use App\Enums\TaskPriorityEnum;
+use App\Enums\UserRoleEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,7 +15,7 @@ class StoreTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return auth()->user()->role === UserRoleEnum::OWNER;
     }
 
     /**

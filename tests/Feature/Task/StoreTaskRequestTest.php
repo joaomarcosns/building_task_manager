@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Client;
 use App\Enums\TaskPriorityEnum;
 use App\Enums\TaskStatusEnum;
+use App\Enums\UserRoleEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -26,7 +27,8 @@ beforeEach(function () {
     // Create users for each client
     $this->user = User::factory()->create([
         'client_id' => $this->client->id,
-        'team_id' => $this->team->id
+        'team_id' => $this->team->id,
+        'role' => UserRoleEnum::OWNER
     ]);
 
     $this->otherUser = User::factory()->create([
@@ -45,9 +47,31 @@ beforeEach(function () {
 
 
 /**
+ * Test that only a user with the 'OWNER' role can create a task.
+ */
+it('fails to create a task if the user is not an owner', function () {
+    // Authenticate as a user with the EMPLOYEE role
+    $this->user->update([
+        'role' => UserRoleEnum::EMPLOYEE
+    ]);
+    // Try to create a task with a user who does not have the 'OWNER' role
+    $response = $this->postJson(route('tasks.store'), [
+        'title' => 'Task with Inactive Building',
+        'description' => 'Building is inactive, so task should not be created.',
+        'building_id' => $this->building->id,
+        'team_id' => $this->team->id,
+        'priority' => TaskPriorityEnum::HIGH,
+    ]);
+
+    // Verify the response is an error (forbidden) because the user does not have permission to create the task
+    $response->assertStatus(403);
+});
+
+/**
  * Test validation failure when required fields are missing.
  */
 it('fails to create a task without required fields', function () {
+
     $response = $this->postJson(route('tasks.store'), []);
 
     $response->assertStatus(422)
@@ -58,6 +82,7 @@ it('fails to create a task without required fields', function () {
  * Test validation failure when the building ID is invalid.
  */
 it('fails to create a task with an invalid building ID', function () {
+
     $data = [
         'title' => 'Invalid Task',
         'description' => 'Test',

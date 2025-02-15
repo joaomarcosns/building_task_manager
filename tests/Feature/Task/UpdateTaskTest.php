@@ -1,11 +1,13 @@
 <?php
 
 use App\Enums\BuildingStatusEnum;
+use App\Enums\TaskPriorityEnum;
 use App\Models\Building;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Client;
 use App\Enums\TaskStatusEnum;
+use App\Enums\UserRoleEnum;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -35,7 +37,8 @@ beforeEach(function () {
     // Create users for each client
     $this->user = User::factory()->create([
         'client_id' => $this->client->id,
-        'team_id' => $this->team->id
+        'team_id' => $this->team->id,
+        'role' => UserRoleEnum::OWNER
     ]);
 
     $this->otherUser = User::factory()->create([
@@ -58,8 +61,28 @@ beforeEach(function () {
     $this->task = Task::factory()->create([
         'client_id' => $this->client->id,
         'building_id' => $this->activeBuilding->id,
+        'created_by' => $this->user->id,
         'status' => TaskStatusEnum::OPEN,
     ]);
+});
+
+/**
+ * Test that only a user with the 'OWNER' role can create a task.
+ */
+it('fails to create a task if the user is not an owner', function () {
+    // Authenticate as a user with the EMPLOYEE role
+    $this->user->update([
+        'role' => UserRoleEnum::EMPLOYEE
+    ]);
+    // Try to create a task with a user who does not have the 'OWNER' role
+    $response = $this->putJson(route('tasks.update', $this->task), [
+        'title' => 'Task with Inactive Building',
+        'description' => 'Building is inactive, so task should not be created.',
+        'team_id' => $this->team->id,
+        'priority' => TaskPriorityEnum::HIGH,
+    ]);
+    // Verify the response is an error (forbidden) because the user does not have permission to create the task
+    $response->assertStatus(403);
 });
 
 /**
@@ -133,7 +156,10 @@ it('fails to update task with inactive building', function () {
  */
 it('can update a task if client_id matches', function () {
     // Create a task with client_id = $this->client->id
-    $task = Task::factory()->create(['client_id' => $this->client->id]);
+    $task = Task::factory()->create([
+        'client_id' => $this->client->id,
+        'created_by' => $this->user->id
+    ]);
 
     // Data to update the task
     $data = [
@@ -171,6 +197,35 @@ it('fails to update task with a non-existent building', function () {
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['building_id']);
 });
+
+
+/**
+ * Test if a user cannot update a task if the created_by does not match the logged-in user.
+ */
+it('fails to update a task if created_by does not match the logged-in user', function () {
+    // Create a task with created_by different from the logged-in user
+    $task = Task::factory()->create([
+        'client_id' => $this->client->id,
+        'created_by' => $this->otherUser->id, // Task created by another user
+        'building_id' => $this->activeBuilding->id,
+        'status' => TaskStatusEnum::OPEN,
+    ]);
+
+    // Data to update the task
+    $data = [
+        'title' => 'Updated Task Title',
+        'description' => 'Updated task description.',
+        'status' => TaskStatusEnum::IN_PROGRESS,
+    ];
+
+    // Try to update the task with the logged-in user
+    $response = $this->putJson(route('tasks.update', $task->id), $data);
+
+    // Check if the response is 403 (Forbidden), as the user is not the creator of the task
+    $response->assertStatus(403)
+        ->assertJson(['message' => 'This action is unauthorized.']);
+});
+
 
 /**
  * Test if a user cannot update a task if the task does not exist.
