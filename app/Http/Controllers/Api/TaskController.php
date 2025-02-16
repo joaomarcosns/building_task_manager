@@ -24,6 +24,7 @@ class TaskController extends Controller
             'createdBy:id,name,email',
             'team:id,name',
             'building',
+            'comments.user:id,name,email',
         ])->where('client_id', $user->client_id);
 
         if ($user->role !== UserRoleEnum::OWNER) {
@@ -46,9 +47,9 @@ class TaskController extends Controller
         }
 
         // Filter by range of created_at
-        $startDate = $request->input('start_date', now()->format('Y-m-d'));
-        $endDate = $request->input('end_date', now()->format('Y-m-d'));
-        $query->whereRaw('DATE(created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
+        // $startDate = $request->input('start_date', now()->format('Y-m-d'));
+        // $endDate = $request->input('end_date', now()->format('Y-m-d'));
+        // $query->whereRaw('DATE(created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
 
         // has pagination
         $data = $request->boolean('paginate', false) ? $query->paginate() : $query->get();

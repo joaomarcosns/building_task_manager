@@ -41,6 +41,12 @@ beforeEach(function () {
         'role' => UserRoleEnum::OWNER
     ]);
 
+    $this->userSameTeam = User::factory()->create([
+        'client_id' => $this->client->id,
+        'team_id' => $this->team->id,
+        'role' => UserRoleEnum::OWNER
+    ]);
+
     $this->otherUser = User::factory()->create([
         'client_id' => $this->otherClient->id,
         'team_id' => $this->otherTeam->id
@@ -118,7 +124,8 @@ it('fails to update task if status is not OPEN', function () {
     ]);
 
     $response->assertStatus(422)
-        ->assertJsonValidationErrors(['status']);
+        ->assertJsonValidationErrors(['status'])
+        ->assertJsonFragment(['The task status can only be changed when the status is OPEN.']);
 });
 
 /**
@@ -149,40 +156,6 @@ it('fails to update task with inactive building', function () {
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['building_id']);
-});
-
-/**
- * Test if a user can update a task if client_id matches.
- */
-it('can update a task if client_id matches', function () {
-    // Create a task with client_id = $this->client->id
-    $task = Task::factory()->create([
-        'client_id' => $this->client->id,
-        'created_by' => $this->user->id
-    ]);
-
-    // Data to update the task
-    $data = [
-        'title' => 'Updated Task Title',
-        'description' => 'Updated Task Description',
-    ];
-
-    // Authenticate as the correct user (same client_id)
-    $this->actingAs($this->user);
-
-    // Try to send a request to update the task
-    $response = $this->putJson(route('tasks.update', $task), $data);
-
-    // Ensure the response is 200 (OK)
-    $response->assertStatus(200)
-        ->assertJsonPath('data.title', 'Updated Task Title');
-
-    // Verify if the task was updated in the database
-    $this->assertDatabaseHas('tasks', [
-        'id' => $task->id,
-        'title' => 'Updated Task Title',
-        'description' => 'Updated Task Description',
-    ]);
 });
 
 /**
@@ -238,4 +211,89 @@ it('fails to update a task if the task does not exist', function () {
     ]);
 
     $response->assertStatus(404);
+});
+
+
+/**
+ * Test validation for responsible_id field.
+ */
+it('fails to update a task if responsible_id is invalid', function () {
+    // Create a task with client_id = $this->client->id
+    $task = Task::factory()->create([
+        'client_id' => $this->client->id,
+        'created_by' => $this->user->id,
+        'responsible_id' => $this->userSameTeam->id,
+    ]);
+
+    $data = [
+        'responsible_id' => 'invalid', // Invalid responsible_id
+    ];
+
+    $response = $this->putJson(route('tasks.update', $task->id), $data);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['responsible_id']);
+});
+
+
+/**
+ * Test validation to ensure the responsible_id cannot be the same as the authenticated user.
+ */
+it('fails to update a task if responsible_id is the same as the authenticated user', function () {
+
+    // Create a task with client_id = $this->client->id
+    $task = Task::factory()->create([
+        'client_id' => $this->client->id,
+        'created_by' => $this->user->id,
+        'responsible_id' => $this->userSameTeam->id,
+    ]);
+
+    // Data to update the task
+    $data = [
+        'title' => 'Updated Task Title',
+        'responsible_id' => $this->user->id, // Same as the authenticated user
+    ];
+
+    // Send a POST request to create a task
+    $response = $this->putJson(route('tasks.update', $task->id), $data);
+
+    // Assert that the response is an error (422 Unprocessable Entity)
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['responsible_id']); // Expecting a validation error for responsible_id
+});
+
+
+/**
+ * Test if a user can update a task if client_id matches.
+ */
+it('can update a task if client_id matches', function () {
+    // Create a task with client_id = $this->client->id
+    $task = Task::factory()->create([
+        'client_id' => $this->client->id,
+        'created_by' => $this->user->id,
+        'responsible_id' => $this->userSameTeam->id,
+    ]);
+
+    // Data to update the task
+    $data = [
+        'title' => 'Updated Task Title',
+        'description' => 'Updated Task Description',
+    ];
+
+    // Authenticate as the correct user (same client_id)
+    $this->actingAs($this->user);
+
+    // Try to send a request to update the task
+    $response = $this->putJson(route('tasks.update', $task), $data);
+
+    // Ensure the response is 200 (OK)
+    $response->assertStatus(200)
+        ->assertJsonPath('data.title', 'Updated Task Title');
+
+    // Verify if the task was updated in the database
+    $this->assertDatabaseHas('tasks', [
+        'id' => $task->id,
+        'title' => 'Updated Task Title',
+        'description' => 'Updated Task Description',
+    ]);
 });

@@ -23,7 +23,8 @@ class Task extends Model
         'created_by',
         'status',
         'due_date',
-        'priority'
+        'priority',
+        'responsible_id'
     ];
 
     /**
@@ -75,6 +76,16 @@ class Task extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user who is responsible for the task.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function responsible(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'responsible_id');
     }
 
     /**

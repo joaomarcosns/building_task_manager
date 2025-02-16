@@ -31,6 +31,12 @@ beforeEach(function () {
         'role' => UserRoleEnum::OWNER
     ]);
 
+    $this->userSamaTeam = User::factory()->create([
+        'client_id' => $this->client->id,
+        'team_id' => $this->team->id,
+        'role' => UserRoleEnum::EMPLOYEE
+    ]);
+
     $this->otherUser = User::factory()->create([
         'client_id' => $this->otherClient->id,
         'team_id' => $this->otherTeam->id
@@ -75,7 +81,7 @@ it('fails to create a task without required fields', function () {
     $response = $this->postJson(route('tasks.store'), []);
 
     $response->assertStatus(422)
-        ->assertJsonValidationErrors(['title', 'description', 'building_id', 'team_id', 'priority']);
+        ->assertJsonValidationErrors(['title', 'description', 'building_id', 'team_id', 'priority', 'responsible_id']);
 });
 
 /**
@@ -192,6 +198,65 @@ it('fails to create a task with an inactive building', function () {
         ->assertJsonValidationErrors(['building_id']); // Expecting a validation error for building_id
 });
 
+
+/**
+ * Test validation for responsible_id field.
+ */
+it('fails to create a task if responsible_id is invalid', function () {
+    // Test with responsible_id missing (required validation)
+    $response = $this->postJson(route('tasks.store'), [
+        'title' => 'Task with Invalid Responsible ID',
+        'description' => 'This task does not have a responsible ID.',
+        'building_id' => $this->building->id,
+        'team_id' => $this->team->id,
+        'priority' => TaskPriorityEnum::HIGH,
+    ]);
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['responsible_id']);
+
+    // Test with responsible_id being a non-existent user for the authenticated client's team
+    $nonExistentUserId = 999; // Assuming user with ID 999 doesn't exist in the authenticated user's client and team
+    $response = $this->postJson(route('tasks.store'), [
+        'title' => 'Task with Invalid Responsible User',
+        'description' => 'This task has an invalid responsible user.',
+        'building_id' => $this->building->id,
+        'team_id' => $this->team->id,
+        'priority' => TaskPriorityEnum::HIGH,
+        'responsible_id' => $nonExistentUserId,
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['responsible_id']);
+});
+
+
+/**
+ * Test validation to ensure the responsible_id cannot be the same as the authenticated user.
+ */
+it('fails to create a task if responsible_id is the same as the authenticated user', function () {
+    // Mark the building as inactive
+    $this->building->update(['status' => BuildingStatusEnum::ACTIVE]);
+
+    $data = [
+        'title' => 'New Task',
+        'description' => 'Task description',
+        'building_id' => $this->building->id,
+        'team_id' => $this->team->id,
+        'status' => TaskStatusEnum::OPEN,
+        'priority' => TaskPriorityEnum::HIGH,
+        'responsible_id' => $this->user->id,
+    ];
+
+    // Send a POST request to create a task
+    $response = $this->postJson(route('tasks.store'), $data);
+
+    // Assert that the response is an error (422 Unprocessable Entity)
+    $response->assertStatus(422)
+        ->assertJsonValidationErrors(['responsible_id']); // Expecting a validation error for responsible_id
+});
+
+
+
 /**
  * Test if a task can be successfully created.
  */
@@ -206,6 +271,7 @@ it('creates a task successfully', function () {
         'team_id' => $this->team->id,
         'status' => TaskStatusEnum::OPEN,
         'priority' => TaskPriorityEnum::HIGH,
+        'responsible_id' => $this->userSamaTeam->id,
     ];
 
     // Send a POST request to create a task

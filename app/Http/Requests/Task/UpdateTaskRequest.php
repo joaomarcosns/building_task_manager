@@ -55,11 +55,26 @@ class UpdateTaskRequest extends FormRequest
                     $query->where('client_id', auth()->user()->client_id)
                 ),
             ],
+            'responsible_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('users', 'id')->where(function ($query) {
+                    $query->where('client_id', auth()->user()->client_id)
+                        ->where('team_id', $this->team_id);
+                }),
+                function ($attribute, $value, $fail) {
+                    if ($value === auth()->user()->id) {
+                        $fail('The responsible person cannot be the same as the user.');
+                    }
+                },
+            ],
         ];
 
         // Custom validation to check if the task status is OPEN before allowing update
         if ($task && $task->status !== TaskStatusEnum::OPEN->value) {
-            $rules['status'][] = 'prohibited'; // Disallow any status change if it's not OPEN
+            $rules['status'][] = function ($attribute, $value, $fail) {
+                $fail('The task status can only be changed when the status is OPEN.');
+            };
         }
 
         return $rules;

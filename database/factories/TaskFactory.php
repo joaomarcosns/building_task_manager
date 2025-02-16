@@ -4,7 +4,9 @@ namespace Database\Factories;
 
 use App\Enums\TaskPriorityEnum;
 use App\Enums\TaskStatusEnum;
+use App\Enums\UserRoleEnum;
 use App\Models\Building;
+use App\Models\Client;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -26,15 +28,11 @@ class TaskFactory extends Factory
             'description' => $this->faker->text,
             'priority' => $this->faker->randomElement(TaskPriorityEnum::cases())->value,
             'status' => $this->faker->randomElement(TaskStatusEnum::cases())->value,
-            'client_id' => function () {
-                return User::factory()->create()->client_id; // Gerar com client_id do usuário criado
-            },
-            'building_id' => function () {
-                return Building::factory()->create()->id;
-            },
-            'team_id' => function () {
-                return Team::factory()->create()->id;
-            },
+            'client_id' => $clientId = Client::factory()->create()->id,
+            'building_id' => Building::factory()->create(['client_id' => $clientId])->id,
+            'team_id' => $team_id = Team::factory()->create(['client_id' => $clientId])->id,
+            'created_by' => User::factory()->create(['client_id' => $clientId, 'role' => UserRoleEnum::OWNER])->id,
+            'responsible_id' => User::factory()->create(['client_id' => $clientId, 'team_id' => $team_id])->id,
         ];
     }
 }

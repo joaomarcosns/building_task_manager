@@ -44,6 +44,19 @@ class StoreTaskRequest extends FormRequest
                     $query->where('client_id', auth()->user()->client_id);
                 }),
             ],
+            'responsible_id' => [
+                'required',
+                'integer',
+                Rule::exists('users', 'id')->where(function ($query) {
+                    $query->where('client_id', auth()->user()->client_id)
+                        ->where('team_id', $this->team_id);
+                }),
+                function ($attribute, $value, $fail) {
+                    if ($value === auth()->user()->id) {
+                        $fail('The responsible person cannot be the same as the user.');
+                    }
+                },
+            ],
         ];
     }
 }
