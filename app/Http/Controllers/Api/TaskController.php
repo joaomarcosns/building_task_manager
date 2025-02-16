@@ -51,6 +51,11 @@ class TaskController extends Controller
         // $endDate = $request->input('end_date', now()->format('Y-m-d'));
         // $query->whereRaw('DATE(created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
 
+        // Filter by responsible
+        if ($request->has('responsible_id')) {
+            $query->where('responsible_id', $request->input('responsible_id'));
+        }
+
         // has pagination
         $data = $request->boolean('paginate', false) ? $query->paginate() : $query->get();
 
