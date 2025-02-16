@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -14,7 +16,9 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -25,7 +29,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role'
+        'role',
     ];
 
     /**
@@ -49,11 +53,10 @@ class User extends Authenticatable
         'role' => UserRoleEnum::class,
     ];
 
-
     /**
      * Get the client associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function client(): BelongsTo
     {
@@ -63,7 +66,7 @@ class User extends Authenticatable
     /**
      * Get the team associated with the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function team(): BelongsTo
     {
@@ -73,7 +76,7 @@ class User extends Authenticatable
     /**
      * Get the tasks created by the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function tasksCreated(): HasMany
     {
@@ -83,7 +86,7 @@ class User extends Authenticatable
     /**
      * Get the comments created by the user.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function comments(): HasMany
     {

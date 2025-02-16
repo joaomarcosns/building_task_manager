@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\BuildingStatusEnum;
 use App\Enums\TaskPriorityEnum;
 use App\Models\Building;
@@ -19,37 +21,37 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     // Create two clients
     $this->client = Client::factory()->create([
-        'name' => 'Client ' . uniqid()
+        'name' => 'Client ' . uniqid(),
     ]);
 
     $this->otherClient = Client::factory()->create([
-        'name' => 'Client ' . uniqid()
+        'name' => 'Client ' . uniqid(),
     ]);
 
     // Create two teams
     $this->team = Team::factory()->create([
-        'client_id' => $this->client->id
+        'client_id' => $this->client->id,
     ]);
     $this->otherTeam = Team::factory()->create([
-        'client_id' => $this->otherClient->id
+        'client_id' => $this->otherClient->id,
     ]);
 
     // Create users for each client
     $this->user = User::factory()->create([
         'client_id' => $this->client->id,
         'team_id' => $this->team->id,
-        'role' => UserRoleEnum::OWNER
+        'role' => UserRoleEnum::OWNER,
     ]);
 
     $this->userSameTeam = User::factory()->create([
         'client_id' => $this->client->id,
         'team_id' => $this->team->id,
-        'role' => UserRoleEnum::OWNER
+        'role' => UserRoleEnum::OWNER,
     ]);
 
     $this->otherUser = User::factory()->create([
         'client_id' => $this->otherClient->id,
-        'team_id' => $this->otherTeam->id
+        'team_id' => $this->otherTeam->id,
     ]);
     $this->actingAs($this->user);
 
@@ -78,7 +80,7 @@ beforeEach(function () {
 it('fails to create a task if the user is not an owner', function () {
     // Authenticate as a user with the EMPLOYEE role
     $this->user->update([
-        'role' => UserRoleEnum::EMPLOYEE
+        'role' => UserRoleEnum::EMPLOYEE,
     ]);
     // Try to create a task with a user who does not have the 'OWNER' role
     $response = $this->putJson(route('tasks.update', $this->task), [
@@ -171,7 +173,6 @@ it('fails to update task with a non-existent building', function () {
         ->assertJsonValidationErrors(['building_id']);
 });
 
-
 /**
  * Test if a user cannot update a task if the created_by does not match the logged-in user.
  */
@@ -199,7 +200,6 @@ it('fails to update a task if created_by does not match the logged-in user', fun
         ->assertJson(['message' => 'This action is unauthorized.']);
 });
 
-
 /**
  * Test if a user cannot update a task if the task does not exist.
  */
@@ -212,7 +212,6 @@ it('fails to update a task if the task does not exist', function () {
 
     $response->assertStatus(404);
 });
-
 
 /**
  * Test validation for responsible_id field.
@@ -234,7 +233,6 @@ it('fails to update a task if responsible_id is invalid', function () {
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['responsible_id']);
 });
-
 
 /**
  * Test validation to ensure the responsible_id cannot be the same as the authenticated user.
@@ -261,7 +259,6 @@ it('fails to update a task if responsible_id is the same as the authenticated us
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['responsible_id']); // Expecting a validation error for responsible_id
 });
-
 
 /**
  * Test if a user can update a task if client_id matches.

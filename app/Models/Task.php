@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\TaskPriorityEnum;
@@ -12,7 +14,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Task extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'title',
@@ -24,7 +27,7 @@ class Task extends Model
         'status',
         'due_date',
         'priority',
-        'responsible_id'
+        'responsible_id',
     ];
 
     /**
@@ -41,7 +44,7 @@ class Task extends Model
     /**
      * Get the building associated with the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function building(): BelongsTo
     {
@@ -51,7 +54,7 @@ class Task extends Model
     /**
      * Get the team associated with the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function team(): BelongsTo
     {
@@ -61,7 +64,7 @@ class Task extends Model
     /**
      * Get the client that owns the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function client(): BelongsTo
     {
@@ -71,7 +74,7 @@ class Task extends Model
     /**
      * Get the user who created the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function createdBy(): BelongsTo
     {
@@ -81,7 +84,7 @@ class Task extends Model
     /**
      * Get the user who is responsible for the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function responsible(): BelongsTo
     {
@@ -91,7 +94,7 @@ class Task extends Model
     /**
      * Get the comments associated with the task.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function comments(): HasMany
     {

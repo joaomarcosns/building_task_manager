@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Enums\UserRoleEnum;
@@ -12,9 +14,7 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    /** Display a listing of the resource. */
     public function index(Request $request): JsonResponse
     {
 
@@ -61,7 +61,7 @@ class TaskController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $data
+            'data' => $data,
         ]);
     }
 
@@ -69,7 +69,7 @@ class TaskController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreTaskRequest  $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function store(StoreTaskRequest $request): JsonResponse
     {
@@ -88,26 +88,24 @@ class TaskController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Task created successfully',
-            'data' => $task
+            'data' => $task,
         ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    /** Display the specified resource. */
     public function show(Task $task)
     {
-        if (!$task->client_id === auth()->user()->client_id) {
+        if ( ! $task->client_id === auth()->user()->client_id) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'This action is unauthorized.'
+                'message' => 'This action is unauthorized.',
             ], 403);
         }
 
         return response()->json([
             'status' => 'success',
             'message' => 'Task found successfully',
-            'data' => $task
+            'data' => $task,
         ]);
     }
 
@@ -115,7 +113,7 @@ class TaskController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\UpdateTaskRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
@@ -129,19 +127,17 @@ class TaskController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Task updated successfully',
-            'data' => $task
+            'data' => $task,
         ]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    /** Remove the specified resource from storage. */
     public function destroy(Task $task)
     {
-        if (!$task->client_id === auth()->user()->client_id) {
+        if ( ! $task->client_id === auth()->user()->client_id) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'This action is unauthorized.'
+                'message' => 'This action is unauthorized.',
             ], 403);
         }
 

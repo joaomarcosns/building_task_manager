@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,13 +15,13 @@ class TaskComment extends Model
     protected $fillable = [
         'task_id',
         'user_id',
-        'comment'
+        'comment',
     ];
 
     /**
      * Get the task associated with the comment.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function task(): BelongsTo
     {
@@ -29,7 +31,7 @@ class TaskComment extends Model
     /**
      * Get the user who created the comment.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function user(): BelongsTo
     {

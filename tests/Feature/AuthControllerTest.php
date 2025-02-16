@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
-
 
 uses(RefreshDatabase::class);
 

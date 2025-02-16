@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,13 +16,13 @@ class Team extends Model
     protected $fillable = [
         'name',
         'building_id',
-        'client_id'
+        'client_id',
     ];
 
     /**
      * Get the building associated with the team.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function building(): BelongsTo
     {
@@ -30,7 +32,7 @@ class Team extends Model
     /**
      * Get the client that owns the team.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function client(): BelongsTo
     {
@@ -40,7 +42,7 @@ class Team extends Model
     /**
      * Get the users associated with the team.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function users(): HasMany
     {
@@ -50,7 +52,7 @@ class Team extends Model
     /**
      * Get the tasks associated with the team.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function tasks(): HasMany
     {

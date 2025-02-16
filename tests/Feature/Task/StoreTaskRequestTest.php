@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\BuildingStatusEnum;
 use App\Models\Building;
 use App\Models\Team;
@@ -28,18 +30,18 @@ beforeEach(function () {
     $this->user = User::factory()->create([
         'client_id' => $this->client->id,
         'team_id' => $this->team->id,
-        'role' => UserRoleEnum::OWNER
+        'role' => UserRoleEnum::OWNER,
     ]);
 
     $this->userSamaTeam = User::factory()->create([
         'client_id' => $this->client->id,
         'team_id' => $this->team->id,
-        'role' => UserRoleEnum::EMPLOYEE
+        'role' => UserRoleEnum::EMPLOYEE,
     ]);
 
     $this->otherUser = User::factory()->create([
         'client_id' => $this->otherClient->id,
-        'team_id' => $this->otherTeam->id
+        'team_id' => $this->otherTeam->id,
     ]);
 
     // Authenticate as the first client user
@@ -51,14 +53,13 @@ beforeEach(function () {
     $this->otherBuilding = Building::factory()->create(['client_id' => $this->otherClient->id]);
 });
 
-
 /**
  * Test that only a user with the 'OWNER' role can create a task.
  */
 it('fails to create a task if the user is not an owner', function () {
     // Authenticate as a user with the EMPLOYEE role
     $this->user->update([
-        'role' => UserRoleEnum::EMPLOYEE
+        'role' => UserRoleEnum::EMPLOYEE,
     ]);
     // Try to create a task with a user who does not have the 'OWNER' role
     $response = $this->postJson(route('tasks.store'), [
@@ -198,7 +199,6 @@ it('fails to create a task with an inactive building', function () {
         ->assertJsonValidationErrors(['building_id']); // Expecting a validation error for building_id
 });
 
-
 /**
  * Test validation for responsible_id field.
  */
@@ -229,7 +229,6 @@ it('fails to create a task if responsible_id is invalid', function () {
         ->assertJsonValidationErrors(['responsible_id']);
 });
 
-
 /**
  * Test validation to ensure the responsible_id cannot be the same as the authenticated user.
  */
@@ -254,8 +253,6 @@ it('fails to create a task if responsible_id is the same as the authenticated us
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['responsible_id']); // Expecting a validation error for responsible_id
 });
-
-
 
 /**
  * Test if a task can be successfully created.

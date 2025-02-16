@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-use App\Enums\BuildingStatus;
 use App\Enums\BuildingStatusEnum;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +21,7 @@ class Building extends Model
         'state',
         'zip_code',
         'client_id',
-        'status'
+        'status',
     ];
 
     /**
@@ -35,7 +36,7 @@ class Building extends Model
     /**
      * Get the client that owns the building.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function client(): BelongsTo
     {
@@ -45,7 +46,7 @@ class Building extends Model
     /**
      * Get the teams associated with the building.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function teams(): HasMany
     {
@@ -55,7 +56,7 @@ class Building extends Model
     /**
      * Get the tasks associated with the building.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function tasks(): HasMany
     {

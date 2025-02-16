@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Task;
 
 use App\Enums\BuildingStatusEnum;
@@ -11,9 +13,7 @@ use Illuminate\Validation\Rule;
 
 class UpdateTaskRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
+    /** Determine if the user is authorized to make this request. */
     public function authorize(): bool
     {
         $task = $this->route('task');
@@ -23,7 +23,7 @@ class UpdateTaskRequest extends FormRequest
             auth()->user()->role === UserRoleEnum::OWNER &&
             $task &&
             $task->client_id === auth()->user()->client_id &&
-            $task->created_by ===  auth()->user()->id;
+            $task->created_by === auth()->user()->id;
     }
 
     /**
@@ -51,8 +51,7 @@ class UpdateTaskRequest extends FormRequest
                 'nullable',
                 'integer',
                 Rule::exists('teams', 'id')->where(
-                    fn($query) =>
-                    $query->where('client_id', auth()->user()->client_id)
+                    fn ($query) => $query->where('client_id', auth()->user()->client_id)
                 ),
             ],
             'responsible_id' => [
