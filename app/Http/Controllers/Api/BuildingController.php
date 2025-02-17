@@ -13,30 +13,8 @@ class BuildingController extends Controller
     /** Display a listing of the resource. */
     public function index()
     {
-
-    }
-
-    /** Store a newly created resource in storage. */
-    public function store(Request $request)
-    {
-
-    }
-
-    /** Display the specified resource. */
-    public function show(Building $building)
-    {
-
-    }
-
-    /** Update the specified resource in storage. */
-    public function update(Request $request, Building $building)
-    {
-
-    }
-
-    /** Remove the specified resource from storage. */
-    public function destroy(Building $building)
-    {
-
+        return response()->json([
+            'data' => Building::all(),
+        ]);
     }
 }
