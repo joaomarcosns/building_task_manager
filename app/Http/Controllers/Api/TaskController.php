@@ -28,7 +28,7 @@ class TaskController extends Controller
         ])->where('client_id', $user->client_id);
 
         if ($user->role !== UserRoleEnum::OWNER) {
-            $query->where('team_id', $user->team_id);
+            $query->where('responsible_id', $user->id);
         }
 
         // Filter by status
@@ -47,9 +47,9 @@ class TaskController extends Controller
         }
 
         // Filter by range of created_at
-        // $startDate = $request->input('start_date', now()->format('Y-m-d'));
-        // $endDate = $request->input('end_date', now()->format('Y-m-d'));
-        // $query->whereRaw('DATE(created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
+        $startDate = $request->input('start_date', now()->format('Y-m-d'));
+        $endDate = $request->input('end_date', now()->format('Y-m-d'));
+        $query->whereRaw('DATE(created_at) BETWEEN ? AND ?', [$startDate, $endDate]);
 
         // Filter by responsible
         if ($request->has('responsible_id')) {
