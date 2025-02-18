@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\BuildingController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\TaskCommentController;
 use App\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,8 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 Route::apiResource('clients', ClientController::class)->only(['index']);
 Route::apiResource('buildings', BuildingController::class)->only(['index']);
 Route::apiResource('users', UserController::class)->only(['index']);
+Route::apiResource('teams', TeamController::class)->only(['index']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', function (Request $request) {
