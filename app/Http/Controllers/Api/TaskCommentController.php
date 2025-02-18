@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\TaskStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TaskComment\TaskCommentRequest;
 use App\Models\Task;
@@ -29,6 +30,11 @@ class TaskCommentController extends Controller
         $data['user_id'] = auth()->id();
         $data['task_id'] = $task->id;
 
+        if ($task->comments()->count() === 0) {
+            $task->status = TaskStatusEnum::IN_PROGRESS;
+            $task->save();
+        }
+
         $taskComment = $task->comments()->create($data);
 
         return response()->json([
@@ -37,7 +43,6 @@ class TaskCommentController extends Controller
             'data' => $taskComment,
         ], 201);
     }
-
     /**
      * Update the specified resource in storage.
      *

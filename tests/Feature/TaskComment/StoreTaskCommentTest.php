@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\TaskStatusEnum;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Client;
@@ -142,5 +143,37 @@ it('allows the responsible user to create a comment', function () {
         'comment' => 'Responsible user comment.',
         'task_id' => $this->task->id,
         'user_id' => $this->responsibleUser->id,
+    ]);
+});
+
+
+/**
+ * Test that the task status changes to IN_PROGRESS when the first comment is made.
+ */
+it('changes task status to IN_PROGRESS when the first comment is made', function () {
+    // Garantir que a tarefa comece com um status diferente de IN_PROGRESS
+    $this->task->update(['status' => TaskStatusEnum::OPEN]);
+
+    // Agir como o criador da tarefa
+    $this->actingAs($this->owner);
+
+    // Fazer o primeiro comentário
+    $response = $this->postJson(route('comments.store', $this->task), [
+        'comment' => 'First comment, status should change to IN_PROGRESS.',
+    ]);
+
+    // Verificar se a resposta foi bem-sucedida
+    $response->assertStatus(201);
+
+    // Verificar se o status da tarefa foi atualizado para IN_PROGRESS
+    $this->assertDatabaseHas('tasks', [
+        'id' => $this->task->id,
+        'status' => TaskStatusEnum::IN_PROGRESS,
+    ]);
+
+    $this->assertDatabaseHas('task_comments', [
+        'comment' => 'First comment, status should change to IN_PROGRESS.',
+        'task_id' => $this->task->id,
+        'user_id' => $this->owner->id,
     ]);
 });
