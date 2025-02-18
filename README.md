@@ -1,79 +1,98 @@
+# 🏗️ Building Task Manager
 
-# Setup Docker Para Projetos Laravel (8, 9, 10 ou 11)
-[Assine a Academy, e Seja VIP!](https://academy.especializati.com.br)
+An efficient task manager to organize and track team activities within buildings.
 
-### Passo a passo
-Clone Repositório
-```sh
-git clone https://github.com/especializati/setup-docker-laravel.git
+---
+
+## **Project Description**
+
+Our clients operate in the real estate sector, managing multiple buildings within their accounts. We need to provide a tool that allows our owners to create tasks for their teams to perform within each building and add comments to their tasks for tracking progress. These tasks should be assignable to any team member and have statuses such as **Open**, **In Progress**, **Completed**, or **Rejected**.
+
+---
+
+## 🚀 **Features**
+
+- **Develop an application using Laravel 10 with REST architecture.**
+- **Implement GET endpoint** for listing tasks of a building along with their comments.
+- **Implement POST endpoint** for creating a new task.
+- **Implement POST endpoint** for creating a new comment for a task.
+- **Define the payload structure** for task and comment creation, considering necessary relationships and information for possible filters.
+- **Implement filtering functionality**, considering at least three filters such as:
+  - Date range of creation.
+  - Assigned user.
+  - Task status.
+  - Building it belongs to.
+
+---
+
+## 🛠️ **Installation & Setup**
+
+### 📥 **Requirements**
+
+Before getting started, make sure you have the following installed:
+
+- Docker & Docker Compose
+
+---
+
+## 📌 Installation & Execution
+
+### 1️⃣ Clone the Repository
+
+```bash
+git clone https://github.com/joaomarcosns/building_task_manager.git
+cd building_task_manager
 ```
 
-Clone os Arquivos do Laravel
-```sh
-git clone https://github.com/laravel/laravel.git app-laravel
-```
+### 2️⃣ Configure Environment Variables
 
+Copy the example environment file and update database credentials if necessary:
 
-Copie os arquivos docker-compose.yml, Dockerfile e o diretório docker/ para o seu projeto
-```sh
-cp -rf setup-docker-laravel/* app-laravel/
-```
-```sh
-cd app-laravel/
-```
-
-
-Crie o Arquivo .env
-```sh
+```bash
 cp .env.example .env
 ```
 
+### 3️⃣ Start Containers with Docker Compose
 
-Atualize as variáveis de ambiente do arquivo .env
-```dosini
-APP_NAME="Especializa Ti"
-APP_URL=http://localhost:8989
+Run the following command to start the application:
 
-DB_CONNECTION=mysql
-DB_HOST=db
-DB_PORT=3306
-DB_DATABASE=laravel
-DB_USERNAME=root
-DB_PASSWORD=root
-
-CACHE_DRIVER=redis
-QUEUE_CONNECTION=redis
-SESSION_DRIVER=redis
-
-REDIS_HOST=redis
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-```
-
-
-Suba os containers do projeto
-```sh
+```bash
 docker-compose up -d
 ```
 
+### 4️⃣ Install Dependencies Inside the Container
 
-Acessar o container
-```sh
-docker-compose exec app bash
+Access the Laravel container:
+
+```bash
+docker exec -it app bash
 ```
 
+Inside the container, run:
 
-Instalar as dependências do projeto
-```sh
+```bash
+cp .env.example .env
 composer install
-```
-
-
-Gerar a key do projeto Laravel
-```sh
 php artisan key:generate
+php artisan migrate
 ```
 
+### 5️⃣ Access the Application
 
-Acessar o projeto
-[http://localhost:8989](http://localhost:8989)
+Once the setup is complete, the application will be available at:
+
+```
+http://localhost:8989
+```
+
+---
+
+## 🏗️ Database Schema
+
+(The database schema can be described here, including main tables and relationships.)
+
+---
+
+## 📩 Postman Collection
+
+To test API endpoints easily, import the `collection.postman_collection.json` file into Postman.
