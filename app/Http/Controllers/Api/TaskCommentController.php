@@ -8,18 +8,22 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TaskComment\TaskCommentRequest;
 use App\Models\Task;
 use App\Models\TaskComment;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class TaskCommentController extends Controller
 {
     /** Display a listing of the resource. */
-    public function index()
-    {
+    public function index() {}
 
-    }
-
-    /** Store a newly created resource in storage. */
-    public function store(TaskCommentRequest $request, Task $task)
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param TaskCommentRequest
+     * @param Task
+     * @return JsonResponse
+     */
+    public function store(TaskCommentRequest $request, Task $task): JsonResponse
     {
         $data = $request->validated();
         $data['user_id'] = auth()->id();
@@ -34,21 +38,22 @@ class TaskCommentController extends Controller
         ], 201);
     }
 
-    /** Display the specified resource. */
-    public function show(TaskComment $taskComment)
-    {
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\TaskComment $taskComment
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, TaskComment $taskComment) {}
 
-    }
 
-    /** Update the specified resource in storage. */
-    public function update(Request $request, TaskComment $taskComment)
-    {
 
-    }
-
-    /** Remove the specified resource from storage. */
-    public function destroy(TaskComment $taskComment)
-    {
-
-    }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param \App\Models\TaskComment $taskComment
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(TaskComment $taskComment) {}
 }

@@ -14,7 +14,12 @@ use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
-    /** Display a listing of the resource. */
+    /**
+     * Display a listing of the resource.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request): JsonResponse
     {
 
@@ -92,10 +97,15 @@ class TaskController extends Controller
         ], 201);
     }
 
-    /** Display the specified resource. */
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function show(Task $task)
     {
-        if ( ! $task->client_id === auth()->user()->client_id) {
+        if (! $task->client_id === auth()->user()->client_id) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'This action is unauthorized.',
@@ -131,10 +141,15 @@ class TaskController extends Controller
         ]);
     }
 
-    /** Remove the specified resource from storage. */
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param \App\Models\Task $task The task instance to be deleted.
+     * @return \Illuminate\Http\JsonResponse The response indicating the result of the delete operation.
+     */
     public function destroy(Task $task)
     {
-        if ( ! $task->client_id === auth()->user()->client_id) {
+        if (! $task->client_id === auth()->user()->client_id) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'This action is unauthorized.',

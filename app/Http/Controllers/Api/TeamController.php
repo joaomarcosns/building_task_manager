@@ -10,33 +10,15 @@ use Illuminate\Http\Request;
 
 class TeamController extends Controller
 {
-    /** Display a listing of the resource. */
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
-
-    }
-
-    /** Store a newly created resource in storage. */
-    public function store(Request $request)
-    {
-
-    }
-
-    /** Display the specified resource. */
-    public function show(Team $team)
-    {
-
-    }
-
-    /** Update the specified resource in storage. */
-    public function update(Request $request, Team $team)
-    {
-
-    }
-
-    /** Remove the specified resource from storage. */
-    public function destroy(Team $team)
-    {
-
+        return response()->json([
+            'data' => Team::all(),
+        ]);
     }
 }

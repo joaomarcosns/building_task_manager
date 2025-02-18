@@ -12,6 +12,9 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
+/**
+ * Set up the test environment before each test.
+ */
 beforeEach(function () {
     $this->client = Client::factory()->create();
     $this->otherClient = Client::factory()->create();
@@ -51,7 +54,63 @@ beforeEach(function () {
 });
 
 /**
- * Allows the task creator to create a comment.
+ * Test that an unauthorized user cannot create a task comment.
+ */
+it('fails to create a task comment when the user is not authorized', function () {
+    $this->actingAs($this->unauthorizedUser);
+
+    $response = $this->postJson(route('comments.store', $this->task), [
+        'comment' => 'Unauthorized comment attempt.',
+    ]);
+
+    $response->assertStatus(403);
+});
+
+/**
+ * Test that a user from another client cannot create a task comment.
+ */
+it('fails to create a task comment when the user belongs to another client', function () {
+    $this->actingAs($this->otherClientUser);
+
+    $response = $this->postJson(route('comments.store', $this->task), [
+        'comment' => 'Cross-client access attempt.',
+    ]);
+
+    $response->assertStatus(403);
+});
+
+/**
+ * Test that a comment cannot be created when the comment field is empty.
+ */
+it('fails to create a task comment when the comment field is empty', function () {
+    $this->actingAs($this->owner);
+
+    $response = $this->postJson(route('comments.store', $this->task), [
+        'comment' => '',
+    ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['comment']);
+});
+
+/**
+ * Test that a comment cannot exceed the maximum length.
+ */
+it('fails to create a task comment when the comment exceeds the maximum length', function () {
+    $this->actingAs($this->owner);
+
+    $longComment = str_repeat('A', 256);
+
+    $response = $this->postJson(route('comments.store', $this->task), [
+        'comment' => $longComment,
+    ]);
+
+    $response->assertStatus(422);
+    $response->assertJsonValidationErrors(['comment']);
+});
+
+/**
+ * Test that the task creator can create a comment.
  */
 it('allows the task creator to create a comment', function () {
     $this->actingAs($this->owner);
@@ -69,7 +128,7 @@ it('allows the task creator to create a comment', function () {
 });
 
 /**
- * Allows the responsible user to create a comment.
+ * Test that the responsible user can create a comment.
  */
 it('allows the responsible user to create a comment', function () {
     $this->actingAs($this->responsibleUser);
@@ -84,60 +143,4 @@ it('allows the responsible user to create a comment', function () {
         'task_id' => $this->task->id,
         'user_id' => $this->responsibleUser->id,
     ]);
-});
-
-/**
- * Fails to create a task comment when the user is not authorized.
- */
-it('fails to create a task comment when the user is not authorized', function () {
-    $this->actingAs($this->unauthorizedUser);
-
-    $response = $this->postJson(route('comments.store', $this->task), [
-        'comment' => 'Unauthorized comment attempt.',
-    ]);
-
-    $response->assertStatus(403);
-});
-
-/**
- * Fails to create a task comment when the user belongs to another client.
- */
-it('fails to create a task comment when the user belongs to another client', function () {
-    $this->actingAs($this->otherClientUser);
-
-    $response = $this->postJson(route('comments.store', $this->task), [
-        'comment' => 'Cross-client access attempt.',
-    ]);
-
-    $response->assertStatus(403);
-});
-
-/**
- * Fails to create a task comment when the comment field is empty.
- */
-it('fails to create a task comment when the comment field is empty', function () {
-    $this->actingAs($this->owner);
-
-    $response = $this->postJson(route('comments.store', $this->task), [
-        'comment' => '',
-    ]);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['comment']);
-});
-
-/**
- * Fails to create a task comment when the comment exceeds the maximum length.
- */
-it('fails to create a task comment when the comment exceeds the maximum length', function () {
-    $this->actingAs($this->owner);
-
-    $longComment = str_repeat('A', 256);
-
-    $response = $this->postJson(route('comments.store', $this->task), [
-        'comment' => $longComment,
-    ]);
-
-    $response->assertStatus(422);
-    $response->assertJsonValidationErrors(['comment']);
 });

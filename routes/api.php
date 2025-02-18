@@ -26,7 +26,6 @@ Route::get('/', function () {
     return response()->json(['message' => 'Hello World!']);
 });
 
-// Route::post('/auth/register', [AuthController::class, 'register']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 Route::apiResource('clients', ClientController::class)->only(['index']);
