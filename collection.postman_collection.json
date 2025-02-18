@@ -1,0 +1,452 @@
+{
+	"info": {
+		"_postman_id": "afdcb1f6-c70b-4475-ae35-660396eaee9c",
+		"name": "PROPRLI <> INTERA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10947518"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"console.log(res.token)\r",
+									"\r",
+									"pm.collectionVariables.set(\"access_token\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"teste@email.com\",\r\n    \"password\": \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Me",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.collectionVariables.set(\"token\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "Bearer {{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}/me",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "tasks",
+			"item": [
+				{
+					"name": "Comments",
+					"item": [
+						{
+							"name": "Post - Tasks Comments",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "Bearer {{access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"comment\": \"Ola\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{url}}/tasks/1/comments",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"tasks",
+										"1",
+										"comments"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "GET - Tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"console.log(res.token)\r",
+									"\r",
+									"pm.collectionVariables.set(\"token\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "Bearer {{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks"
+							],
+							"query": [
+								{
+									"key": "paginate",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "status",
+									"value": "open",
+									"description": "Options: [open, in_progress, completed, rejected]",
+									"disabled": true
+								},
+								{
+									"key": "priority",
+									"value": "low",
+									"description": "Options: [low, medium, high]",
+									"disabled": true
+								},
+								{
+									"key": "building_id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "responsible_id",
+									"value": "1",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST - Tasks",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var res = pm.response.json();\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"console.log(res.token)\r",
+									"\r",
+									"pm.collectionVariables.set(\"token\", res.token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "Bearer {{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Task with Inactive Building\",\r\n    \"description\": \"Building is inactive, so task should not be created.\",\r\n    \"building_id\": 1,\r\n    \"team_id\": 1,\r\n    \"priority\": \"high\",\r\n    \"responsible_id\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/tasks",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Utils",
+			"item": [
+				{
+					"name": "Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/users",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Clients",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/clients",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buildings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/buildings",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"buildings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Teams",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/teams",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"teams"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
