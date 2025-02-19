@@ -72,6 +72,20 @@ Inside the container, run:
 
 ```bash
 cp .env.example .env
+```
+
+Change the following lines in the `.env` file:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=db
+DB_PORT=5432
+DB_DATABASE=building_task_manager
+DB_USERNAME=username
+DB_PASSWORD=userpass
+```
+
+```
 composer install
 php artisan key:generate
 php artisan migrate
@@ -91,8 +105,20 @@ http://localhost:8989
 
 (The database schema can be described here, including main tables and relationships.)
 
+![Database Schema](https://postimg.cc/JDDq7MbQ)
 ---
 
 ## 📩 Postman Collection
 
 To test API endpoints easily, import the `collection.postman_collection.json` file into Postman.
+
+---
+
+## 📜 Users exemple
+
+| Email               | Password | Role   |
+|---------------------|---------|---------|
+| <owner@email1.com>  | 123456  | Owner  |
+| <owner@email2.com>  | 123456  | Owner  |
+| <employee@email1.com>  | 123456  | Employee  |
+| <employee@email2.com>  | 123456  | Employee  |
