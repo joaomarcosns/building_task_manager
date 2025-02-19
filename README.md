@@ -57,7 +57,7 @@ cp .env.example .env
 Run the following command to start the application:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ### 4️⃣ Install Dependencies Inside the Container
@@ -65,7 +65,7 @@ docker-compose up -d
 Access the Laravel container:
 
 ```bash
-docker exec -it app bash
+docker compose exec app bash
 ```
 
 Inside the container, run:
