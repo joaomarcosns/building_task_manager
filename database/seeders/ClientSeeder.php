@@ -34,10 +34,10 @@ class ClientSeeder extends Seeder
 
         // Create predefined teams
         $teams = collect(['Electrician', 'Plumber', 'Doorman'])
-            ->map(fn ($name) => Team::create(['name' => $name, 'client_id' => $client->id]));
+            ->map(fn($name) => Team::create(['name' => $name, 'client_id' => $client->id]));
 
         // Create users for each team
-        $teams->each(fn ($team) => User::factory()->count(3)->create([
+        $teams->each(fn($team) => User::factory()->count(3)->create([
             'team_id' => $team->id,
             'client_id' => $client->id,
         ]));
@@ -45,10 +45,19 @@ class ClientSeeder extends Seeder
         // Set a user as OWNER (without a team)
         if ($firstUser = User::where('client_id', $client->id)->first()) {
             $firstUser->update([
-                'email' => "teste@email{$client->id}.com",
+                'email' => "owner@email{$client->id}.com",
                 'password' => Hash::make('123456'),
                 'role' => UserRoleEnum::OWNER,
                 'team_id' => null,
+            ]);
+        }
+
+        // Set the second user as EMPLOYEE
+        if ($secondUser = User::where('client_id', $client->id)->skip(1)->first()) {
+            $secondUser->update([
+                'email' => "employee@email{$client->id}.com",
+                'password' => Hash::make('123456'),
+                'role' => UserRoleEnum::EMPLOYEE,
             ]);
         }
     }
