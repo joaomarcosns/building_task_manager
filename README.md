@@ -52,6 +52,17 @@ Copy the example environment file and update database credentials if necessary:
 cp .env.example .env
 ```
 
+Change the following lines in the `.env` file:
+
+```env
+DB_CONNECTION=pgsql
+DB_HOST=db
+DB_PORT=5432
+DB_DATABASE=building_task_manager
+DB_USERNAME=username
+DB_PASSWORD=userpass
+```
+
 ### 3️⃣ Start Containers with Docker Compose
 
 Run the following command to start the application:
@@ -69,21 +80,6 @@ docker compose exec app bash
 ```
 
 Inside the container, run:
-
-```bash
-cp .env.example .env
-```
-
-Change the following lines in the `.env` file:
-
-```env
-DB_CONNECTION=pgsql
-DB_HOST=db
-DB_PORT=5432
-DB_DATABASE=building_task_manager
-DB_USERNAME=username
-DB_PASSWORD=userpass
-```
 
 ```
 composer install
