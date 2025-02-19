@@ -105,7 +105,7 @@ http://localhost:8989
 
 (The database schema can be described here, including main tables and relationships.)
 
-![Database Schema](https://postimg.cc/JDDq7MbQ)
+![Database Schema](https://i.postimg.cc/V64HRNv2/building-task-manager.png)
 ---
 
 ## 📩 Postman Collection
