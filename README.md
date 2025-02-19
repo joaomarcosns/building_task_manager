@@ -81,7 +81,7 @@ docker compose exec app bash
 
 Inside the container, run:
 
-```
+```bash
 composer install
 php artisan key:generate
 php artisan migrate
@@ -91,7 +91,7 @@ php artisan migrate
 
 Once the setup is complete, the application will be available at:
 
-```
+```url
 http://localhost:8989
 ```
 
